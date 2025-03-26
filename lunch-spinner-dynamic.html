@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunch Spinner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        select, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .wheel-container {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 5px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .spinner {
+            font-size: 18px;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Lunch Spinner</h1>
+
+    <label for="city">Select City (within 20 miles of Sacramento):</label>
+    <select id="city"></select>
+
+    <label for="foodGenre">Select Food Genre:</label>
+    <select id="foodGenre"></select>
+
+    <button onclick="getRestaurant()">Spin and Get a Lunch Spot</button>
+
+    <div class="wheel-container">
+        <div id="spinner" class="spinner">Spin to Find a Place!</div>
+    </div>
+
+    <script>
+        const apiKey = "YOUR_GOOGLE_API_KEY"; // Replace with your Google API Key
+        const baseUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?";
+        const sacramentoLat = 38.5816; // Latitude of Sacramento
+        const sacramentoLng = -121.4944; // Longitude of Sacramento
+
+        async function getNearbyCities() {
+            // Use Google API to find cities within a 20-mile radius from Sacramento
+            const radius = 32000; // 20 miles in meters
+            const url = `${baseUrl}location=${sacramentoLat},${sacramentoLng}&radius=${radius}&type=locality&key=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const cities = data.results.map(place => place.name);
+                
+                const citySelect = document.getElementById("city");
+                cities.forEach(city => {
+                    const option = document.createElement("option");
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching nearby cities:", error);
+            }
+        }
+
+        async function getFoodGenres(city) {
+            // Get restaurant types based on the selected city
+            const query = `${city} restaurants`;
+            const url = `${baseUrl}query=${encodeURIComponent(query)}&key=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                const foodGenres = new Set();
+                data.results.forEach(place => {
+                    if (place.types) {
+                        place.types.forEach(type => {
+                            if (type.includes("restaurant")) {
+                                foodGenres.add(type);
+                            }
+                        });
+                    }
+                });
+
+                const genreSelect = document.getElementById("foodGenre");
+                foodGenres.forEach(genre => {
+                    const option = document.createElement("option");
+                    option.value = genre;
+                    option.textContent = genre;
+                    genreSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching food genres:", error);
+            }
+        }
+
+        async function getRestaurant() {
+            const genre = document.getElementById("foodGenre").value;
+            const city = document.getElementById("city").value;
+
+            const query = `${genre} restaurants in ${city}`;
+            const url = `${baseUrl}query=${encodeURIComponent(query)}&key=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.results && data.results.length > 0) {
+                    const topRatedPlaces = data.results.filter(place => place.rating >= 4);
+                    const randomPlace = topRatedPlaces[Math.floor(Math.random() * topRatedPlaces.length)];
+
+                    document.getElementById("spinner").innerText = randomPlace.name;
+                } else {
+                    document.getElementById("spinner").innerText = "No results found.";
+                }
+            } catch (error) {
+                console.error("Error fetching data from Google API:", error);
+                document.getElementById("spinner").innerText = "Error fetching results.";
+            }
+        }
+
+        // Initialize the city and food genre dropdowns
+        window.onload = async () => {
+            await getNearbyCities(); // Load cities first
+        }
+    </script>
+
+</body>
+</html>
