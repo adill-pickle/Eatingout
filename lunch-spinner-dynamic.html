@@ -39,7 +39,7 @@
     <h1>Lunch Spinner</h1>
 
     <label for="city">Select City (within 20 miles of Sacramento):</label>
-    <select id="city" onchange="getFoodGenres(this.value)"></select>
+    <select id="city" onchange="getFoodGenres()"></select>
 
     <label for="foodGenre">Select Food Genre:</label>
     <select id="foodGenre"></select>
@@ -51,105 +51,76 @@
     </div>
 
     <script>
-        const apiKey = "AIzaSyAu3wgBYxwa9LWkDLdHGl9oTFsekMUzH8c"; // Replace with your Google API Key
+        const apiKey = "AIzaSyAu3wgBYxwa9LWkDLdHGl9oTFsekMUzH8c"; // Replace with your API Key
         const baseUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?";
-        const sacramentoLat = 38.5816; // Latitude of Sacramento
-        const sacramentoLng = -121.4944; // Longitude of Sacramento
 
-        async function getNearbyCities() {
-            const radius = 32000; // 20 miles in meters
-            const url = `${baseUrl}location=${sacramentoLat},${sacramentoLng}&radius=${radius}&type=locality&key=${apiKey}`;
+        // Hardcoded list of cities within 20 miles of Sacramento
+        const cities = ["Sacramento", "Roseville", "Folsom", "Elk Grove", "Citrus Heights", "Rancho Cordova", "Rocklin"];
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log("Nearby cities data:", data); // Debugging log
+        // Predefined list of food genres
+        const foodGenres = ["Mexican", "Italian", "Chinese", "Indian", "Japanese", "Thai", "BBQ", "Vegan", "American", "Seafood"];
 
-                if (data.results && data.results.length > 0) {
-                    const cities = data.results.map(place => place.name);
-                    const citySelect = document.getElementById("city");
+        // Populate the city dropdown
+        function getNearbyCities() {
+            const citySelect = document.getElementById("city");
+            citySelect.innerHTML = ""; // Clear existing options
 
-                    cities.forEach(city => {
-                        const option = document.createElement("option");
-                        option.value = city;
-                        option.textContent = city;
-                        citySelect.appendChild(option);
-                    });
-                } else {
-                    console.warn("No cities found");
-                }
-            } catch (error) {
-                console.error("Error fetching nearby cities:", error);
-            }
+            cities.forEach(city => {
+                const option = document.createElement("option");
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+
+            // Automatically load food genres for the first city
+            getFoodGenres();
         }
 
-        async function getFoodGenres(city) {
-            const query = `${city} restaurants`;
-            const url = `${baseUrl}query=${encodeURIComponent(query)}&key=${apiKey}`;
+        // Populate the food genre dropdown
+        function getFoodGenres() {
+            const genreSelect = document.getElementById("foodGenre");
+            genreSelect.innerHTML = ""; // Clear previous options
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log("Food genres data:", data); // Debugging log
-
-                if (data.results && data.results.length > 0) {
-                    const foodGenres = new Set();
-                    data.results.forEach(place => {
-                        if (place.types) {
-                            place.types.forEach(type => {
-                                if (type.includes("restaurant")) {
-                                    foodGenres.add(type);
-                                }
-                            });
-                        }
-                    });
-
-                    const genreSelect = document.getElementById("foodGenre");
-                    genreSelect.innerHTML = ''; // Clear existing options
-
-                    foodGenres.forEach(genre => {
-                        const option = document.createElement("option");
-                        option.value = genre;
-                        option.textContent = genre;
-                        genreSelect.appendChild(option);
-                    });
-                } else {
-                    console.warn("No food genres found for city:", city);
-                }
-            } catch (error) {
-                console.error("Error fetching food genres:", error);
-            }
+            foodGenres.forEach(genre => {
+                const option = document.createElement("option");
+                option.value = genre;
+                option.textContent = genre;
+                genreSelect.appendChild(option);
+            });
         }
 
+        // Fetch a restaurant from Google Places API
         async function getRestaurant() {
             const genre = document.getElementById("foodGenre").value;
             const city = document.getElementById("city").value;
 
-            const query = `${genre} restaurants in ${city}`;
+            if (!genre || !city) {
+                document.getElementById("spinner").innerText = "Please select a city and a food genre.";
+                return;
+            }
+
+            const query = `${genre} restaurant in ${city}`;
             const url = `${baseUrl}query=${encodeURIComponent(query)}&key=${apiKey}`;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                console.log("Restaurant data:", data); // Debugging log
+                console.log("API Response:", data);
 
                 if (data.results && data.results.length > 0) {
-                    const topRatedPlaces = data.results.filter(place => place.rating >= 4);
-                    const randomPlace = topRatedPlaces[Math.floor(Math.random() * topRatedPlaces.length)];
-
+                    const randomPlace = data.results[Math.floor(Math.random() * data.results.length)];
                     document.getElementById("spinner").innerText = randomPlace.name;
                 } else {
                     document.getElementById("spinner").innerText = "No results found.";
                 }
             } catch (error) {
-                console.error("Error fetching data from Google API:", error);
+                console.error("Error fetching restaurant:", error);
                 document.getElementById("spinner").innerText = "Error fetching results.";
             }
         }
 
-        window.onload = async () => {
-            await getNearbyCities();
-        }
+        // Initialize the dropdowns on page load
+        window.onload = getNearbyCities;
     </script>
 
 </body>
