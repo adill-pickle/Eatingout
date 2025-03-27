@@ -56,7 +56,7 @@
         const sacramentoLat = 38.5816; // Latitude of Sacramento
         const sacramentoLng = -121.4944; // Longitude of Sacramento
 
-        async function getNearbyCities() 
+        async function getNearbyCities() {
             const radius = 32000; // 20 miles in meters
             const url = `${baseUrl}location=${sacramentoLat},${sacramentoLng}&radius=${radius}&type=locality&key=${apiKey}`;
 
@@ -64,15 +64,20 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 console.log("Nearby cities data:", data); // Debugging log
-                const cities = data.results.map(place => place.name);
-                
-                const citySelect = document.getElementById("city");
-                cities.forEach(city => {
-                    const option = document.createElement("option");
-                    option.value = city;
-                    option.textContent = city;
-                    citySelect.appendChild(option);
-                });
+
+                if (data.results && data.results.length > 0) {
+                    const cities = data.results.map(place => place.name);
+                    const citySelect = document.getElementById("city");
+
+                    cities.forEach(city => {
+                        const option = document.createElement("option");
+                        option.value = city;
+                        option.textContent = city;
+                        citySelect.appendChild(option);
+                    });
+                } else {
+                    console.warn("No cities found");
+                }
             } catch (error) {
                 console.error("Error fetching nearby cities:", error);
             }
@@ -87,25 +92,30 @@
                 const data = await response.json();
                 console.log("Food genres data:", data); // Debugging log
 
-                const foodGenres = new Set();
-                data.results.forEach(place => {
-                    if (place.types) {
-                        place.types.forEach(type => {
-                            if (type.includes("restaurant")) {
-                                foodGenres.add(type);
-                            }
-                        });
-                    }
-                });
+                if (data.results && data.results.length > 0) {
+                    const foodGenres = new Set();
+                    data.results.forEach(place => {
+                        if (place.types) {
+                            place.types.forEach(type => {
+                                if (type.includes("restaurant")) {
+                                    foodGenres.add(type);
+                                }
+                            });
+                        }
+                    });
 
-                const genreSelect = document.getElementById("foodGenre");
-                genreSelect.innerHTML = ''; // Clear existing options
-                foodGenres.forEach(genre => {
-                    const option = document.createElement("option");
-                    option.value = genre;
-                    option.textContent = genre;
-                    genreSelect.appendChild(option);
-                });
+                    const genreSelect = document.getElementById("foodGenre");
+                    genreSelect.innerHTML = ''; // Clear existing options
+
+                    foodGenres.forEach(genre => {
+                        const option = document.createElement("option");
+                        option.value = genre;
+                        option.textContent = genre;
+                        genreSelect.appendChild(option);
+                    });
+                } else {
+                    console.warn("No food genres found for city:", city);
+                }
             } catch (error) {
                 console.error("Error fetching food genres:", error);
             }
