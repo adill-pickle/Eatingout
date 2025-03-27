@@ -56,7 +56,7 @@
         const sacramentoLat = 38.5816; // Latitude of Sacramento
         const sacramentoLng = -121.4944; // Longitude of Sacramento
 
-        async function getNearbyCities() {
+        async function getNearbyCities() 
             const radius = 32000; // 20 miles in meters
             const url = `${baseUrl}location=${sacramentoLat},${sacramentoLng}&radius=${radius}&type=locality&key=${apiKey}`;
 
