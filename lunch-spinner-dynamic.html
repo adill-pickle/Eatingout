@@ -21,16 +21,17 @@
             color: white;
             padding: 20px 0;
             text-align: center;
-            font-size: 24px;
+            font-size: 32px;
+            font-weight: bold;
         }
         main {
             margin-top: 50px;
             text-align: center;
         }
         select, button {
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
+            padding: 15px;
+            margin: 15px;
+            font-size: 20px;
             border: 1px solid #ced4da;
             border-radius: 5px;
         }
@@ -44,8 +45,8 @@
             background-color: #0056b3;
         }
         .wheel-container {
-            width: 300px;
-            height: 300px;
+            width: 500px;
+            height: 500px;
             border-radius: 50%;
             border: 5px solid #007bff;
             display: flex;
@@ -65,10 +66,17 @@
             align-items: center;
             position: absolute;
             transition: transform 4s ease-out;
-            background: linear-gradient(45deg, #f8f9fa, #007bff);
+            background: conic-gradient(
+                #ffcc00 0% 16.66%, 
+                #ff9900 16.66% 33.33%, 
+                #ff6600 33.33% 50%, 
+                #ff3300 50% 66.66%, 
+                #ff0000 66.66% 83.33%, 
+                #cc0000 83.33% 100%
+            );
         }
         .spinner {
-            font-size: 18px;
+            font-size: 24px;
             color: white;
             text-align: center;
             padding: 10px;
@@ -76,22 +84,27 @@
         .pointer {
             width: 0; 
             height: 0; 
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 20px solid red;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 25px solid red;
             position: absolute;
-            top: -25px;
+            top: -30px;
+        }
+        .result {
+            font-size: 24px;
+            margin-top: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
     <header>
-        Let's Eat!
+        Lunch Spinner
     </header>
 
     <main>
-        <h1>For the nights when nobody wants to decide...</h1>
+        <h1>Let's Eat Spinner</h1>
 
         <label for="category">What are you craving?:</label>
         <select id="category">
@@ -118,6 +131,8 @@
                 <div id="spinner" class="spinner">Spin to Find a Place!</div>
             </div>
         </div>
+
+        <div id="result" class="result"></div>
     </main>
 
     <script>
@@ -152,10 +167,10 @@
                 wheel.style.transform = `rotate(${angle}deg)`;
 
                 setTimeout(() => {
-                    document.getElementById("spinner").innerText = randomPlace;
+                    document.getElementById("result").innerText = `You should eat at: ${randomPlace}`;
                 }, 4000);
             } else {
-                document.getElementById("spinner").innerText = "No restaurants found.";
+                document.getElementById("result").innerText = "No restaurants found.";
             }
         }
     </script>
