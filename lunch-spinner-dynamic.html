@@ -6,42 +6,70 @@
     <title>Lunch Spinner</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 24px;
+        }
+        main {
             margin-top: 50px;
+            text-align: center;
         }
         select, button {
             padding: 10px;
             margin: 10px;
             font-size: 16px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
         .wheel-container {
             width: 300px;
             height: 300px;
             border-radius: 50%;
-            border: 5px solid #333;
+            border: 5px solid #007bff;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-top: 20px;
             position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 5px solid #333;
+            border: 5px solid #007bff;
             display: flex;
             justify-content: center;
             align-items: center;
             position: absolute;
             transition: transform 4s ease-out;
+            background: linear-gradient(45deg, #f8f9fa, #007bff);
         }
         .spinner {
             font-size: 18px;
-            color: black;
+            color: white;
             text-align: center;
             padding: 10px;
         }
@@ -58,47 +86,52 @@
 </head>
 <body>
 
-    <h1>Let's Eat Spinner</h1>
+    <header>
+        Let's Eat!
+    </header>
 
-    <label for="category">What are you craving?:</label>
-    <select id="category">
-        <option value="Pizza">Pizza</option>
-        <option value="Bakeries & sweets">Bakeries & sweets</option>
-        <option value="Breakfast">Breakfast</option>
-        <option value="Breweries & tap houses">Breweries & tap houses</option>
-        <option value="Chinese">Chinese</option>
-        <option value="Coffee">Coffee</option>
-        <option value="Drinks">Drinks</option>
-        <option value="Japanese">Japanese</option>
-        <option value="Mexican">Mexican</option>
-        <option value="Misc Food">Misc Food</option>
-        <option value="Thai">Thai</option>
-        <option value="Vietnamese">Vietnamese</option>
-        <option value="High-end dining">High-end dining</option>
-    </select>
+    <main>
+        <h1>For the nights when nobody wants to decide...</h1>
 
-    <button onclick="spinWheel()">Spin and Let Fate Decide!</button>
+        <label for="category">What are you craving?:</label>
+        <select id="category">
+            <option value="Pizza">Pizza</option>
+            <option value="Bakeries & sweets">Bakeries & sweets</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Breweries & tap houses">Breweries & tap houses</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Coffee">Coffee</option>
+            <option value="Drinks">Drinks</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Mexican">Mexican</option>
+            <option value="Misc Food">Misc Food</option>
+            <option value="Thai">Thai</option>
+            <option value="Vietnamese">Vietnamese</option>
+            <option value="High-end dining">High-end dining</option>
+        </select>
 
-    <div class="wheel-container">
-        <div class="pointer"></div>
-        <div id="wheel" class="wheel">
-            <div id="spinner" class="spinner">Spin to Find a Place!</div>
+        <button onclick="spinWheel()">Spin and Let Fate Decide!</button>
+
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div id="wheel" class="wheel">
+                <div id="spinner" class="spinner">Spin to Find a Place!</div>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script>
-        // Example restaurant data categorized
         const restaurantData = {
             "Pizza": ["Pizza Supreme Being", "Majka Pizza","Masullo", "Pizzasaurus Rex", "Chavious"],
-            "Bakeries & sweets": ["Faria (try the olive loaf)", "Guenther’s Ice Cream (a mainstay)", "Vic’s Ice Cream", "Broadway Donuts", "Stanley Donuts", "Freeport Bakery", "Moonbelly Bakery", "Spinner’s cinnamon rolls (best I’ve ever had)", "PastryCat916 (pop up at Majka)", "Midtown Bakery", "Licked Ice Cream"],
+            "Bakeries & sweets": ["Faria (try the olive loaf)", "Guenther’s Ice Cream (a mainstay)", "Vic’s Ice Cream", "Broadway Donuts", "Stanley Donuts", "Freeport Bakery", "Moonbelly Bakery"],
             "Breakfast": ["Breakfast Sandos: Camellia, Mast Coffee", "Forgotten Bakery (bagels)", "Morning Fork*", "Pushkin’s (on 29th and also Sibling)", "Druthers Sutter Park"],
             "Breweries & tap houses": ["SacYard tap house", "At Ease Brewing", "Urban Roots (solid food)", "Nitty’s Cider", "Pintworks (Touchstone Brewing)", "Mattie Groves", "Bike Dog"],
             "Chinese": ["Dumpling and Tea House", "Journey to the Dumpling", "Ming Dynasty (dim sum)", "Asian Pearl (dim sum)", "Frank Fat’s", "Yue Huang (dim sum in Natomas)"],
-            "Coffee": ["Pachamama", "Camellia (great coffee, EXCELLENT breakfast sandwiches)", "Immortal Cafe", "Old Soul (other food & drink options; be prepared for food to take a while)", "Temple Coffee (tea options, baked goods)", "Chocolate Fish", "Mast Coffee"],
+            "Coffee": ["Pachamama", "Camellia (great coffee, EXCELLENT breakfast sandwiches)", "Immortal Cafe", "Old Soul (other food & drink options; be prepared for food to take a while)", "Temple"],
             "Drinks": ["Ten Ten Room", "The Snug", "Ro Sham Beaux", "Betty's Wine Bar", "Ju Ju Kitchen and Cocktails", "Karma Brew (solid espresso martini)", "Butterscotch Den", "KC Kombucha (non-alcoholic)"],
-            "Japanese": ["Kru (high end, reservations req’d)", "Binchoyaki (yakitori, small plates, bento boxes)", "Mahroba Japanese Bakery (tons of options, really good)", "Mikuni (standard fare sushi)", "Origami Asian Grill (not strictly Japanese, more fusion; fast casual; great banh mi)", "Kodaiko Ramen", "Ryujin Ramen (generally fine, nothing over the top)", "Fish Face Poke Bar", "The Izakaya (still haven’t been here but I’ve heard good things)", "Mecha Mucho", "Sushi Cafe (East Sac neighborhood sushi)"],
+            "Japanese": ["Kru (high end, reservations req’d)", "Binchoyaki (yakitori, small plates, bento boxes)", "Mahroba Japanese Bakery (tons of options, really good)", "Mikuni (standard fare)"],
             "Mexican": ["Tres Hermanas (gets very, very busy)", "La Fiesta Taqueria (typical taqueria, good takeout option)", "El Rincon Mexican (tiny little spot but good!)", "Nopalitos (cash only)"],
-            "Misc Food": ["Hook & Ladder (try whatever the pasta special is)", "MOTHER (all vegetarian but if you read that and skip this, you’re wrong. Mushroom po boy is legend)", "Mecha Mucho (best egg salad sandwich I’ve had outside Japan)", "Juno’s Kitchen (East Sacramento, sandwiches)", "Corti Bros (get the sandwiches)", "Urban Roots (BBQ & brewery)", "Obo Italian (quick, lots of options)", "Selland’s (quick, lots of options, multiple locations)", "The Sandwich Spot (multiple locations)", "The Rind (cheese, sandwiches, wine)", "Tank House (BBQ)", "Tapas: Tapas the World", "World Famous Hotboys Chicken (Nashville hot chicken)", "Fixin’s Soul Kitchen (Southern food)", "Adamo's (Italian)", "Jim Denny’s"],
+            "Misc Food": ["Hook & Ladder (try whatever the pasta special is)", "MOTHER (all vegetarian but if you read that and skip this, you’re wrong. Mushroom po boy is legend)", "Mecha Much"],
             "Thai": ["Thai Farmhouse (on broadway, small but solid overall; good takeout option)", "Kin Thai Street Eatery (really, really good)", "Coconut on T"],
             "Vietnamese": ["Saigon Alley"],
             "High-end dining": ["Canon", "Mulvaney’s B&L", "Ella", "The Kitchen (1 star Michelin - book way in advance)", "Kru"]
@@ -112,15 +145,12 @@
                 const randomIndex = Math.floor(Math.random() * categoryRestaurants.length);
                 const randomPlace = categoryRestaurants[randomIndex];
 
-                // Calculate random rotation angle
                 const rotations = Math.floor(Math.random() * 10) + 5; // Randomize rotations between 5 and 15
                 const angle = rotations * 360 + (randomIndex * (360 / categoryRestaurants.length));
 
-                // Apply rotation
                 const wheel = document.getElementById("wheel");
                 wheel.style.transform = `rotate(${angle}deg)`;
 
-                // Display the result after the spin completes
                 setTimeout(() => {
                     document.getElementById("spinner").innerText = randomPlace;
                 }, 4000);
