@@ -39,11 +39,22 @@
 
     <h1>Lunch Spinner</h1>
 
-    <label for="city">Select City (within 20 miles of Sacramento):</label>
-    <select id="city" onchange="populateFoodGenres(this.value)"></select>
-
-    <label for="foodGenre">Select Food Genre:</label>
-    <select id="foodGenre"></select>
+    <label for="category">Select Category:</label>
+    <select id="category">
+        <option value="Pizza">Pizza</option>
+        <option value="Bakeries & sweets">Bakeries & sweets</option>
+        <option value="Breakfast">Breakfast</option>
+        <option value="Breweries & tap houses">Breweries & tap houses</option>
+        <option value="Chinese">Chinese</option>
+        <option value="Coffee">Coffee</option>
+        <option value="Drinks">Drinks</option>
+        <option value="Japanese">Japanese</option>
+        <option value="Mexican">Mexican</option>
+        <option value="Misc Food">Misc Food</option>
+        <option value="Thai">Thai</option>
+        <option value="Vietnamese">Vietnamese</option>
+        <option value="High-end dining">High-end dining</option>
+    </select>
 
     <button onclick="getRestaurant()">Spin and Get a Lunch Spot</button>
 
@@ -52,66 +63,33 @@
     </div>
 
     <script>
-        const googleApiKey = "YOUR_GOOGLE_API_KEY"; // Replace with your Google API Key
-        const cx = "YOUR_CSE_ID"; // Replace with your Custom Search Engine ID
-        const cities = ["Sacramento", "Roseville", "Elk Grove", "Folsom", "Davis"];
-        const foodGenres = {
-            "Sacramento": ["Italian", "Mexican", "Chinese", "Japanese", "American"],
-            "Roseville": ["Italian", "Mexican", "Chinese", "Japanese", "American"],
-            "Elk Grove": ["Italian", "Mexican", "Chinese", "Japanese", "American"],
-            "Folsom": ["Italian", "Mexican", "Chinese", "Japanese", "American"],
-            "Davis": ["Italian", "Mexican", "Chinese", "Japanese", "American"]
+        // Example restaurant data categorized
+        const restaurantData = {
+            "Pizza": ["Pizza Place 1", "Pizza Place 2"],
+            "Bakeries & sweets": ["Bakery 1", "Bakery 2"],
+            "Breakfast": ["Breakfast Spot 1", "Breakfast Spot 2"],
+            "Breweries & tap houses": ["Brewery 1", "Brewery 2"],
+            "Chinese": ["Chinese Restaurant 1", "Chinese Restaurant 2"],
+            "Coffee": ["Coffee Shop 1", "Coffee Shop 2"],
+            "Drinks": ["Bar 1", "Bar 2"],
+            "Japanese": ["Japanese Restaurant 1", "Japanese Restaurant 2"],
+            "Mexican": ["Mexican Restaurant 1", "Mexican Restaurant 2"],
+            "Misc Food": ["Misc Food Place 1", "Misc Food Place 2"],
+            "Thai": ["Thai Restaurant 1", "Thai Restaurant 2"],
+            "Vietnamese": ["Vietnamese Restaurant 1", "Vietnamese Restaurant 2"],
+            "High-end dining": ["High-end Restaurant 1", "High-end Restaurant 2"]
         };
 
-        function populateCities() {
-            const citySelect = document.getElementById("city");
-            cities.forEach(city => {
-                const option = document.createElement("option");
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
-        }
+        function getRestaurant() {
+            const category = document.getElementById("category").value;
+            const categoryRestaurants = restaurantData[category];
 
-        function populateFoodGenres(city) {
-            const genreSelect = document.getElementById("foodGenre");
-            genreSelect.innerHTML = ''; // Clear existing options
-
-            const genres = foodGenres[city];
-            genres.forEach(genre => {
-                const option = document.createElement("option");
-                option.value = genre;
-                option.textContent = genre;
-                genreSelect.appendChild(option);
-            });
-        }
-
-        async function getRestaurant() {
-            const genre = document.getElementById("foodGenre").value;
-            const city = document.getElementById("city").value;
-            const query = `${genre} restaurants in ${city} reviews`;
-            const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${googleApiKey}&cx=${cx}`;
-
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log("Search results:", data); // Debugging log
-
-                if (data.items && data.items.length > 0) {
-                    const topResults = data.items.slice(0, 10).map(item => item.title);
-                    const randomPlace = topResults[Math.floor(Math.random() * topResults.length)];
-                    document.getElementById("spinner").innerText = randomPlace;
-                } else {
-                    document.getElementById("spinner").innerText = "No results found.";
-                }
-            } catch (error) {
-                console.error("Error fetching data from Google CSE API:", error);
-                document.getElementById("spinner").innerText = "Error fetching results.";
+            if (categoryRestaurants && categoryRestaurants.length > 0) {
+                const randomPlace = categoryRestaurants[Math.floor(Math.random() * categoryRestaurants.length)];
+                document.getElementById("spinner").innerText = randomPlace;
+            } else {
+                document.getElementById("spinner").innerText = "No restaurants found.";
             }
-        }
-
-        window.onload = () => {
-            populateCities();
         }
     </script>
 
