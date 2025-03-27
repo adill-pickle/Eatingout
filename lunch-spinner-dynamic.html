@@ -51,7 +51,7 @@
     </div>
 
     <script>
-        const apiKey =  "AIzaSyAu3wgBYxwa9LWkDLdHGl9oTFsekMUzH8c"; // Replace with your Google API Key
+        const apiKey = "AIzaSyAu3wgBYxwa9LWkDLdHGl9oTFsekMUzH8c"; // Replace with your Google API Key
         const baseUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?";
         const sacramentoLat = 38.5816; // Latitude of Sacramento
         const sacramentoLng = -121.4944; // Longitude of Sacramento
@@ -63,6 +63,7 @@
             try {
                 const response = await fetch(url);
                 const data = await response.json();
+                console.log("Nearby cities data:", data); // Debugging log
                 const cities = data.results.map(place => place.name);
                 
                 const citySelect = document.getElementById("city");
@@ -84,6 +85,7 @@
             try {
                 const response = await fetch(url);
                 const data = await response.json();
+                console.log("Food genres data:", data); // Debugging log
 
                 const foodGenres = new Set();
                 data.results.forEach(place => {
@@ -119,6 +121,7 @@
             try {
                 const response = await fetch(url);
                 const data = await response.json();
+                console.log("Restaurant data:", data); // Debugging log
 
                 if (data.results && data.results.length > 0) {
                     const topRatedPlaces = data.results.filter(place => place.rating >= 4);
