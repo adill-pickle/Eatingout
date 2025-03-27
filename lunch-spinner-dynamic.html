@@ -67,12 +67,12 @@
             position: absolute;
             transition: transform 4s ease-out;
             background: conic-gradient(
-                #ffcc00 0% 16.66%, 
-                #ff9900 16.66% 33.33%, 
-                #ff6600 33.33% 50%, 
-                #ff3300 50% 66.66%, 
-                #ff0000 66.66% 83.33%, 
-                #cc0000 83.33% 100%
+                #1e3a8a 0% 16.66%, 
+                #3b82f6 16.66% 33.33%, 
+                #60a5fa 33.33% 50%, 
+                #93c5fd 50% 66.66%, 
+                #bfdbfe 66.66% 83.33%, 
+                #dbeafe 83.33% 100%
             );
         }
         .spinner {
@@ -167,7 +167,7 @@
                 wheel.style.transform = `rotate(${angle}deg)`;
 
                 setTimeout(() => {
-                    document.getElementById("result").innerText = `You should eat at: ${randomPlace}`;
+                    document.getElementById("result").innerText = `And the winner is: ${randomPlace}`;
                 }, 4000);
             } else {
                 document.getElementById("result").innerText = "No restaurants found.";
