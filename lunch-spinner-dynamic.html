@@ -29,13 +29,15 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         main {
-            margin-top: 20px;
             text-align: center;
             font-size: 20px;
             backdrop-filter: blur(10px);
             background-color: rgba(255, 255, 255, 0.7);
             padding: 20px;
             border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         select, button {
             padding: 15px;
@@ -134,4 +136,81 @@
             <option value="Breweries & tap houses">Breweries & tap houses</option>
             <option value="Chinese">Chinese</option>
             <option value="Coffee">Coffee</option>
-            <option value="Drinks">Drinks
+            <option value="Drinks">Drinks</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Mexican">Mexican</option>
+            <option value="Misc Food">Misc Food</option>
+            <option value="Thai">Thai</option>
+            <option value="Vietnamese">Vietnamese</option>
+            <option value="High-end dining">High-end dining</option>
+        </select>
+
+        <button onclick="spinWheel()">Spin and Let Fate Decide!</button>
+
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div id="wheel" class="wheel"></div>
+        </div>
+
+        <div id="result" class="result"></div>
+    </main>
+
+    <script>
+        const restaurantData = {
+            "Pizza": ["Pizza Supreme Being", "Majka Pizza", "Masullo", "Pizzasaurus Rex", "Chavious"],
+            "Bakeries & sweets": ["Faria (try the olive loaf)", "Guenther’s Ice Cream (a mainstay)", "Vic’s Ice Cream", "Broadway Donuts", "Stanley Donuts", "Freeport Bakery", "Moonbelly Bakehouse"],
+            "Breakfast": ["Breakfast Sandos: Camellia, Mast Coffee", "Forgotten Bakery (bagels)", "Morning Fork*", "Pushkin’s (on 29th and also Sibling)", "Druthers Sutter Park"],
+            "Breweries & tap houses": ["SacYard tap house", "At Ease Brewing", "Urban Roots (solid food)", "Nitty’s Cider", "Pintworks (Touchstone Brewing)", "Mattie Groves", "Bike Dog"],
+            "Chinese": ["Dumpling and Tea House", "Journey to the Dumpling", "Ming Dynasty (dim sum)", "Asian Pearl (dim sum)", "Frank Fat’s", "Yue Huang (dim sum in Natomas)"],
+            "Coffee": ["Pachamama", "Camellia (great coffee, EXCELLENT breakfast sandwiches)", "Immortal Cafe", "Old Soul (other food & drink options; be prepared for food to take a while)", "Temple Coffee"],
+            "Drinks": ["Ten Ten Room", "The Snug", "Ro Sham Beaux", "Betty's Wine Bar", "Ju Ju Kitchen and Cocktails", "Karma Brew (solid espresso martini)", "Butterscotch Den", "KC Kombucha (non-alcoholic)"],
+            "Japanese": ["Kru (high end, reservations req’d)", "Binchoyaki (yakitori, small plates, bento boxes)", "Mahroba Japanese Bakery (tons of options, really good)", "Mikuni (standard fare)"],
+            "Mexican": ["Tres Hermanas (gets very, very busy)", "La Fiesta Taqueria (typical taqueria, good takeout option)", "El Rincon Mexican (tiny little spot but good!)", "Nopalitos (cash only)"],
+            "Misc Food": ["Hook & Ladder (try whatever the pasta special is)", "MOTHER (all vegetarian but if you read that and skip this, you’re wrong. Mushroom po boy is legend)", "Mecha Mucha (Vietnamese)"],
+            "Thai": ["Thai Farmhouse (on broadway, small but solid overall; good takeout option)", "Kin Thai Street Eatery (really, really good)", "Coconut on T"],
+            "Vietnamese": ["Saigon Alley"],
+            "High-end dining": ["Canon", "Mulvaney’s B&L", "Ella", "The Kitchen (1 star Michelin - book way in advance)", "Kru"]
+        };
+
+        function createWheelSegments(categoryRestaurants) {
+            const wheel = document.getElementById("wheel");
+            wheel.innerHTML = ""; // Clear existing segments
+
+            const numSegments = categoryRestaurants.length;
+            const segmentAngle = 360 / numSegments;
+
+            for (let i = 0; i < numSegments; i++) {
+                const segment = document.createElement("div");
+                segment.classList.add("segment");
+                segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
+                segment.style.background = (i % 2 === 0) ? '#1e3a8a' : '#3b82f6';
+
+                wheel.appendChild(segment);
+            }
+        }
+
+        function spinWheel() {
+            const category = document.getElementById("category").value;
+            const categoryRestaurants = restaurantData[category];
+
+            if (categoryRestaurants && categoryRestaurants.length > 0) {
+                createWheelSegments(categoryRestaurants);
+
+                const randomIndex = Math.floor(Math.random() * categoryRestaurants.length);
+                const rotations = Math.floor(Math.random() * 10) + 5; // Randomize rotations between 5 and 15
+                const angle = rotations * 360 + (randomIndex * (360 / categoryRestaurants.length));
+
+                const wheel = document.getElementById("wheel");
+                wheel.style.transform = `rotate(${angle}deg)`;
+
+                setTimeout(() => {
+                    document.getElementById("result").innerText = `And the winner is: ${categoryRestaurants[randomIndex]}`;
+                }, 4000);
+            } else {
+                document.getElementById("result").innerText = "No restaurants found.";
+            }
+        }
+    </script>
+
+</body>
+</html>
