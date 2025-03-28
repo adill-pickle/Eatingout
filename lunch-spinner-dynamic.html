@@ -192,6 +192,15 @@
         }
 
         function spinWheel() {
+            const wheel = document.getElementById("wheel");
+
+            // Reset the wheel rotation
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+
+            // Force reflow for the reset to take effect
+            wheel.offsetHeight;
+
             const category = document.getElementById("category").value;
             const categoryRestaurants = restaurantData[category];
 
@@ -201,7 +210,7 @@
                 const randomIndex = Math.floor(Math.random() * categoryRestaurants.length);
                 const angle = 360 * 5 + (randomIndex * (360 / categoryRestaurants.length)); // 5 full rotations
 
-                const wheel = document.getElementById("wheel");
+                wheel.style.transition = 'transform 4s cubic-bezier(0.33, 1, 0.68, 1)'; // Ensure consistent speed
                 wheel.style.transform = `rotate(${angle}deg)`;
 
                 setTimeout(() => {
