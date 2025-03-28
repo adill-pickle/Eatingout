@@ -33,20 +33,8 @@
             padding: 15px;
             margin: 15px;
             font-size: 20px;
-            border: 1px solid #ced4da;
             border-radius: 5px;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
-        select {
-            background-color: #fff;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="5" viewBox="0 0 4 5"><path fill="%23343a40" d="M2 0L0 2h4zM2 5L0 3h4z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 10px 10px;
-            padding-right: 30px;
+            border: 1px solid #ced4da;
         }
         button {
             background-color: #007bff;
@@ -58,58 +46,47 @@
             background-color: #0056b3;
         }
         .wheel-container {
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            border: 5px solid #007bff;
+            width: 350px;
+            height: 350px;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 5px solid #007bff;
             position: absolute;
-            transition: transform 4s ease-out;
-            background: conic-gradient(
-                #1e3a8a 0% 16.66%, 
-                #3b82f6 16.66% 33.33%, 
-                #60a5fa 33.33% 50%, 
-                #93c5fd 50% 66.66%, 
-                #bfdbfe 66.66% 83.33%, 
-                #dbeafe 83.33% 100%
-            );
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            overflow: hidden;
         }
-        .wheel .segment {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .segment {
             position: absolute;
             width: 50%;
             height: 50%;
             top: 0;
-            left: 0;
-            transform-origin: 100% 100%;
-            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            left: 50%;
+            transform-origin: 0% 100%;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            font-size: 14px;
             color: white;
-            padding: 2px 5px;
-            background-color: rgba(0, 0, 0, 0.5);
+            font-size: 12px;
+            font-weight: bold;
+            padding: 5px;
         }
         .pointer {
             width: 0; 
             height: 0; 
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-            border-bottom: 25px solid red;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 40px solid red;
             position: absolute;
-            top: -30px;
+            top: -10px;
+            z-index: 10;
         }
         .result {
             font-size: 24px;
@@ -157,24 +134,23 @@
     <script>
         const restaurantData = {
             "Pizza": ["Pizza Supreme Being", "Majka Pizza", "Masullo", "Pizzasaurus Rex", "Chavious"],
-            "Bakeries & sweets": ["Faria (try the olive loaf)", "Guenther’s Ice Cream (a mainstay)", "Vic’s Ice Cream", "Broadway Donuts", "Stanley Donuts", "Freeport Bakery", "Moonbelly Bakehouse"],
-            "Breakfast": ["Breakfast Sandos: Camellia, Mast Coffee", "Forgotten Bakery (bagels)", "Morning Fork*", "Pushkin’s (on 29th and also Sibling)", "Druthers Sutter Park"],
-            "Breweries & tap houses": ["SacYard tap house", "At Ease Brewing", "Urban Roots (solid food)", "Nitty’s Cider", "Pintworks (Touchstone Brewing)", "Mattie Groves", "Bike Dog"],
-            "Chinese": ["Dumpling and Tea House", "Journey to the Dumpling", "Ming Dynasty (dim sum)", "Asian Pearl (dim sum)", "Frank Fat’s", "Yue Huang (dim sum in Natomas)"],
-            "Coffee": ["Pachamama", "Camellia (great coffee, EXCELLENT breakfast sandwiches)", "Immortal Cafe", "Old Soul (other food & drink options; be prepared for food to take a while)", "Temple Coffee"],
-            "Drinks": ["Ten Ten Room", "The Snug", "Ro Sham Beaux", "Betty's Wine Bar", "Ju Ju Kitchen and Cocktails", "Karma Brew (solid espresso martini)", "Butterscotch Den", "KC Kombucha (non-alcoholic)"],
-            "Japanese": ["Kru (high end, reservations req’d)", "Binchoyaki (yakitori, small plates, bento boxes)", "Mahroba Japanese Bakery (tons of options, really good)", "Mikuni (standard fare)"],
-            "Mexican": ["Tres Hermanas (gets very, very busy)", "La Fiesta Taqueria (typical taqueria, good takeout option)", "El Rincon Mexican (tiny little spot but good!)", "Nopalitos (cash only)"],
-            "Misc Food": ["Hook & Ladder (try whatever the pasta special is)", "MOTHER (all vegetarian but if you read that and skip this, you’re wrong. Mushroom po boy is legend)", "Mecha Mucha (Vietnamese)"],
-            "Thai": ["Thai Farmhouse (on broadway, small but solid overall; good takeout option)", "Kin Thai Street Eatery (really, really good)", "Coconut on T"],
+            "Bakeries & sweets": ["Faria", "Guenther’s Ice Cream", "Vic’s Ice Cream", "Broadway Donuts"],
+            "Breakfast": ["Camellia", "Morning Fork", "Pushkin’s", "Druthers"],
+            "Breweries & tap houses": ["SacYard", "Urban Roots", "Mattie Groves", "Bike Dog"],
+            "Chinese": ["Dumpling House", "Ming Dynasty", "Frank Fat’s", "Yue Huang"],
+            "Coffee": ["Pachamama", "Camellia", "Temple Coffee", "Old Soul"],
+            "Drinks": ["Ten Ten Room", "The Snug", "Betty's Wine Bar", "Karma Brew"],
+            "Japanese": ["Kru", "Binchoyaki", "Mahroba Bakery", "Mikuni"],
+            "Mexican": ["Tres Hermanas", "La Fiesta Taqueria", "El Rincon", "Nopalitos"],
+            "Misc Food": ["Hook & Ladder", "MOTHER", "Mecha Mucha"],
+            "Thai": ["Thai Farmhouse", "Kin Thai", "Coconut on T"],
             "Vietnamese": ["Saigon Alley"],
-            "High-end dining": ["Canon", "Mulvaney’s B&L", "Ella", "The Kitchen (1 star Michelin - book way in advance)", "Kru"]
+            "High-end dining": ["Canon", "Mulvaney’s", "Ella", "The Kitchen"]
         };
 
         function createWheelSegments(categoryRestaurants) {
             const wheel = document.getElementById("wheel");
-            wheel.innerHTML = ""; // Clear existing segments
-
+            wheel.innerHTML = ""; 
             const numSegments = categoryRestaurants.length;
             const segmentAngle = 360 / numSegments;
 
@@ -182,8 +158,8 @@
                 const segment = document.createElement("div");
                 segment.classList.add("segment");
                 segment.style.transform = `rotate(${i * segmentAngle}deg)`;
+                segment.style.background = `hsl(${i * (360 / numSegments)}, 100%, 50%)`; 
                 segment.innerHTML = `<span>${categoryRestaurants[i]}</span>`;
-
                 wheel.appendChild(segment);
             }
         }
@@ -192,16 +168,17 @@
             const category = document.getElementById("category").value;
             const categoryRestaurants = restaurantData[category];
 
-            if (categoryRestaurants && categoryRestaurants.length > 0) {
+            if (categoryRestaurants.length > 0) {
                 createWheelSegments(categoryRestaurants);
 
                 const randomIndex = Math.floor(Math.random() * categoryRestaurants.length);
                 const randomPlace = categoryRestaurants[randomIndex];
 
-                const rotations = Math.floor(Math.random() * 10) + 5; // Randomize rotations between 5 and 15
+                const rotations = Math.floor(Math.random() * 10) + 5;
                 const angle = rotations * 360 + (randomIndex * (360 / categoryRestaurants.length));
 
                 const wheel = document.getElementById("wheel");
+                wheel.style.transition = "transform 4s ease-out";
                 wheel.style.transform = `rotate(${angle}deg)`;
 
                 setTimeout(() => {
