@@ -78,9 +78,9 @@
         .wheel-container {
             width: 100%;
             max-width: 500px;
-            aspect-ratio: 1 / 1; /* Ensure the aspect ratio is 1:1 to preserve the circle */
             position: relative;
             margin-top: 20px;
+            padding-bottom: 100%; /* Maintain aspect ratio */
         }
         .wheel {
             width: 100%;
@@ -88,6 +88,8 @@
             border-radius: 50%;
             border: 10px solid #343a40;
             position: absolute;
+            top: 0;
+            left: 0;
             transform-origin: center center;
             transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
             background: conic-gradient(
