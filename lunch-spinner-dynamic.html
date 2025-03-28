@@ -76,33 +76,35 @@
             border: 5px solid #007bff;
             position: absolute;
             transition: transform 4s ease-out;
-            display: flex;
-            flex-wrap: wrap;
+            background: conic-gradient(
+                #1e3a8a 0% 16.66%, 
+                #3b82f6 16.66% 33.33%, 
+                #60a5fa 33.33% 50%, 
+                #93c5fd 50% 66.66%, 
+                #bfdbfe 66.66% 83.33%, 
+                #dbeafe 83.33% 100%
+            );
         }
         .wheel .segment {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
             width: 50%;
             height: 50%;
-            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 100% 100%;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
             text-align: center;
-            line-height: 1.5;
-            box-sizing: border-box;
-            clip-path: polygon(50% 50%, 100% 0, 100% 100%);
-        }
-        .wheel .segment span {
-            display: inline-block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(90deg);
-            transform-origin: center;
             font-size: 14px;
             color: white;
             padding: 2px 5px;
             background-color: rgba(0, 0, 0, 0.5);
         }
         .pointer {
-            width: 0;
-            height: 0;
+            width: 0; 
+            height: 0; 
             border-left: 25px solid transparent;
             border-right: 25px solid transparent;
             border-bottom: 25px solid red;
@@ -179,13 +181,8 @@
             for (let i = 0; i < numSegments; i++) {
                 const segment = document.createElement("div");
                 segment.classList.add("segment");
-                segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
-                segment.style.background = (i % 2 === 0) ? '#1e3a8a' : '#3b82f6';
-                segment.style.borderTop = "2px solid white";
-
-                const text = document.createElement("span");
-                text.innerText = categoryRestaurants[i];
-                segment.appendChild(text);
+                segment.style.transform = `rotate(${i * segmentAngle}deg)`;
+                segment.innerHTML = `<span>${categoryRestaurants[i]}</span>`;
 
                 wheel.appendChild(segment);
             }
