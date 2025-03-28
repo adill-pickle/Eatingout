@@ -76,28 +76,33 @@
             border: 5px solid #007bff;
             position: absolute;
             transition: transform 4s ease-out;
+            display: flex;
+            flex-wrap: wrap;
         }
         .wheel .segment {
             width: 50%;
             height: 50%;
             position: absolute;
-            transform-origin: 100% 100%;
             text-align: center;
             line-height: 1.5;
             box-sizing: border-box;
+            clip-path: polygon(50% 50%, 100% 0, 100% 100%);
         }
         .wheel .segment span {
             display: inline-block;
-            transform: rotate(90deg);
-            transform-origin: left center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(90deg);
+            transform-origin: center;
             font-size: 14px;
             color: white;
             padding: 2px 5px;
             background-color: rgba(0, 0, 0, 0.5);
         }
         .pointer {
-            width: 0; 
-            height: 0; 
+            width: 0;
+            height: 0;
             border-left: 25px solid transparent;
             border-right: 25px solid transparent;
             border-bottom: 25px solid red;
@@ -149,7 +154,7 @@
 
     <script>
         const restaurantData = {
-            "Pizza": ["Pizza Supreme Being", "Majka Pizza","Masullo", "Pizzasaurus Rex", "Chavious"],
+            "Pizza": ["Pizza Supreme Being", "Majka Pizza", "Masullo", "Pizzasaurus Rex", "Chavious"],
             "Bakeries & sweets": ["Faria (try the olive loaf)", "Guenther’s Ice Cream (a mainstay)", "Vic’s Ice Cream", "Broadway Donuts", "Stanley Donuts", "Freeport Bakery", "Moonbelly Bakehouse"],
             "Breakfast": ["Breakfast Sandos: Camellia, Mast Coffee", "Forgotten Bakery (bagels)", "Morning Fork*", "Pushkin’s (on 29th and also Sibling)", "Druthers Sutter Park"],
             "Breweries & tap houses": ["SacYard tap house", "At Ease Brewing", "Urban Roots (solid food)", "Nitty’s Cider", "Pintworks (Touchstone Brewing)", "Mattie Groves", "Bike Dog"],
@@ -176,6 +181,7 @@
                 segment.classList.add("segment");
                 segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
                 segment.style.background = (i % 2 === 0) ? '#1e3a8a' : '#3b82f6';
+                segment.style.borderTop = "2px solid white";
 
                 const text = document.createElement("span");
                 text.innerText = categoryRestaurants[i];
