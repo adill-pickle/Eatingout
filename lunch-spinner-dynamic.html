@@ -1,194 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lunch Spinner</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #f8f9fa;
-            color: #343a40;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            width: 100%;
-            background-color: #343a40;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-        }
-        main {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 20px;
-        }
-        select, button {
-            padding: 15px;
-            margin: 15px;
-            font-size: 20px;
-            border-radius: 5px;
-            border: 1px solid #ced4da;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .wheel-container {
-            width: 350px;
-            height: 350px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            position: absolute;
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-            overflow: hidden;
-        }
-        .segment {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            top: 0;
-            left: 50%;
-            transform-origin: 0% 100%;
-            clip-path: polygon(0 0, 100% 0, 50% 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 5px;
-        }
-        .pointer {
-            width: 0; 
-            height: 0; 
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 40px solid red;
-            position: absolute;
-            top: -10px;
-            z-index: 10;
-        }
-        .result {
-            font-size: 24px;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lunch Spinner</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    canvas {
+      border: 2px solid #333;
+      margin-top: 20px;
+    }
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    #result {
+      font-size: 20px;
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        For the nights when nobody wants to choose...
-    </header>
+  <h1>Where Should I Eat Lunch?</h1>
+  <p>Spin the wheel to pick a delicious restaurant!</p>
 
-    <main>
-        <h1>Good Luck!</h1>
+  <label for="category">Choose a category:</label>
+  <select id="category" onchange="updateWheel()">
+    <option value="Pizza">Pizza</option>
+    <option value="Bakeries & sweets">Bakeries & sweets</option>
+    <option value="Breakfast">Breakfast</option>
+    <option value="Breweries & tap houses">Breweries & tap houses</option>
+    <option value="Chinese">Chinese</option>
+    <option value="Coffee">Coffee</option>
+    <option value="Drinks">Drinks</option>
+    <option value="Japanese">Japanese</option>
+    <option value="Mexican">Mexican</option>
+    <option value="Misc Food">Misc Food</option>
+    <option value="Thai">Thai</option>
+    <option value="Vietnamese">Vietnamese</option>
+    <option value="High-end dining">High-end dining</option>
+  </select>
 
-        <label for="category">What are you craving?:</label>
-        <select id="category">
-            <option value="Pizza">Pizza</option>
-            <option value="Bakeries & sweets">Bakeries & sweets</option>
-            <option value="Breakfast">Breakfast</option>
-            <option value="Breweries & tap houses">Breweries & tap houses</option>
-            <option value="Chinese">Chinese</option>
-            <option value="Coffee">Coffee</option>
-            <option value="Drinks">Drinks</option>
-            <option value="Japanese">Japanese</option>
-            <option value="Mexican">Mexican</option>
-            <option value="Misc Food">Misc Food</option>
-            <option value="Thai">Thai</option>
-            <option value="Vietnamese">Vietnamese</option>
-            <option value="High-end dining">High-end dining</option>
-        </select>
+  <br>
+  <canvas id="wheelCanvas" width="500" height="500"></canvas>
+  <br>
+  <button id="spinBtn">Spin!</button>
+  <div id="result"></div>
 
-        <button onclick="spinWheel()">Spin and Let Fate Decide!</button>
+  <script>
+    const restaurantData = {
+      "Pizza": ["Pizza Supreme Being", "Majka Pizza", "Masullo", "Pizzasaurus Rex", "Chavious"],
+      "Bakeries & sweets": ["Faria", "Guenther’s Ice Cream", "Vic’s Ice Cream", "Broadway Donuts", "Stanley Donuts"],
+      "Breakfast": ["Camellia", "Forgotten Bakery", "Morning Fork", "Pushkin’s", "Druthers Sutter Park"],
+      "Breweries & tap houses": ["SacYard", "At Ease Brewing", "Urban Roots", "Nitty’s Cider", "Bike Dog"],
+      "Chinese": ["Dumpling and Tea House", "Journey to the Dumpling", "Ming Dynasty", "Asian Pearl", "Frank Fat’s"],
+      "Coffee": ["Pachamama", "Camellia", "Immortal Cafe", "Old Soul", "Temple Coffee"],
+      "Drinks": ["Ten Ten Room", "The Snug", "Ro Sham Beaux", "Betty's Wine Bar", "Ju Ju Kitchen"],
+      "Japanese": ["Kru", "Binchoyaki", "Mahroba Japanese Bakery", "Mikuni"],
+      "Mexican": ["Tres Hermanas", "La Fiesta Taqueria", "El Rincon Mexican", "Nopalitos"],
+      "Misc Food": ["Hook & Ladder", "MOTHER", "Mecha Mucha"],
+      "Thai": ["Thai Farmhouse", "Kin Thai Street Eatery", "Coconut on T"],
+      "Vietnamese": ["Saigon Alley"],
+      "High-end dining": ["Canon", "Mulvaney’s B&L", "Ella", "The Kitchen"]
+    };
 
-        <div class="wheel-container">
-            <div class="pointer"></div>
-            <div id="wheel" class="wheel"></div>
-        </div>
+    let restaurants = restaurantData["Pizza"]; // Default category
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spinBtn");
+    const resultDiv = document.getElementById("result");
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 200;
+    let numOptions = restaurants.length;
+    let arc = Math.PI * 2 / numOptions;
+    let startAngle = 0;
+    let spinTime = 0;
+    let spinTimeTotal = 0;
+    let spinning = false;
+    let finalAngle = 0;
 
-        <div id="result" class="result"></div>
-    </main>
+    const colors = ["#FF5733", "#33FFCE", "#FF33F6", "#335BFF", "#B6FF33", "#FFBD33", "#8C33FF"];
 
-    <script>
-        const restaurantData = {
-            "Pizza": ["Pizza Supreme Being", "Majka Pizza", "Masullo", "Pizzasaurus Rex", "Chavious"],
-            "Bakeries & sweets": ["Faria", "Guenther’s Ice Cream", "Vic’s Ice Cream", "Broadway Donuts"],
-            "Breakfast": ["Camellia", "Morning Fork", "Pushkin’s", "Druthers"],
-            "Breweries & tap houses": ["SacYard", "Urban Roots", "Mattie Groves", "Bike Dog"],
-            "Chinese": ["Dumpling House", "Ming Dynasty", "Frank Fat’s", "Yue Huang"],
-            "Coffee": ["Pachamama", "Camellia", "Temple Coffee", "Old Soul"],
-            "Drinks": ["Ten Ten Room", "The Snug", "Betty's Wine Bar", "Karma Brew"],
-            "Japanese": ["Kru", "Binchoyaki", "Mahroba Bakery", "Mikuni"],
-            "Mexican": ["Tres Hermanas", "La Fiesta Taqueria", "El Rincon", "Nopalitos"],
-            "Misc Food": ["Hook & Ladder", "MOTHER", "Mecha Mucha"],
-            "Thai": ["Thai Farmhouse", "Kin Thai", "Coconut on T"],
-            "Vietnamese": ["Saigon Alley"],
-            "High-end dining": ["Canon", "Mulvaney’s", "Ella", "The Kitchen"]
-        };
+    function updateWheel() {
+      const category = document.getElementById("category").value;
+      restaurants = restaurantData[category] || [];
+      numOptions = restaurants.length;
+      arc = Math.PI * 2 / numOptions;
+      drawWheel();
+    }
 
-        function createWheelSegments(categoryRestaurants) {
-            const wheel = document.getElementById("wheel");
-            wheel.innerHTML = ""; 
-            const numSegments = categoryRestaurants.length;
-            const segmentAngle = 360 / numSegments;
+    function drawWheel() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < numOptions; i++) {
+        let angle = startAngle + i * arc;
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, angle, angle + arc, false);
+        ctx.fill();
+        ctx.save();
+        ctx.fillStyle = "#fff";
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = "right";
+        ctx.font = "bold 16px sans-serif";
+        ctx.fillText(restaurants[i], radius - 10, 10);
+        ctx.restore();
+      }
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 30, 0, Math.PI * 2, false);
+      ctx.fillStyle = "#333";
+      ctx.fill();
+    }
 
-            for (let i = 0; i < numSegments; i++) {
-                const segment = document.createElement("div");
-                segment.classList.add("segment");
-                segment.style.transform = `rotate(${i * segmentAngle}deg)`;
-                segment.style.background = `hsl(${i * (360 / numSegments)}, 100%, 50%)`; 
-                segment.innerHTML = `<span>${categoryRestaurants[i]}</span>`;
-                wheel.appendChild(segment);
-            }
-        }
+    function spin() {
+      if (spinning) return;
+      spinning = true;
+      spinTime = 0;
+      spinTimeTotal = Math.random() * 3000 + 3000;
+      animateSpin();
+    }
 
-        function spinWheel() {
-            const category = document.getElementById("category").value;
-            const categoryRestaurants = restaurantData[category];
+    function animateSpin() {
+      spinTime += 30;
+      if (spinTime >= spinTimeTotal) {
+        stopSpin();
+        return;
+      }
+      const spinAngle = easeOut(spinTime, 0, finalAngle, spinTimeTotal);
+      startAngle += (spinAngle * Math.PI / 180);
+      drawWheel();
+      requestAnimationFrame(animateSpin);
+    }
 
-            if (categoryRestaurants.length > 0) {
-                createWheelSegments(categoryRestaurants);
+    function stopSpin() {
+      const degrees = startAngle * 180 / Math.PI % 360;
+      const index = Math.floor((360 - degrees + (arc * 180 / Math.PI)/2) % 360 / (360 / numOptions));
+      resultDiv.innerHTML = "Today's lunch: <strong>" + restaurants[index] + "</strong>!";
+      spinning = false;
+    }
 
-                const randomIndex = Math.floor(Math.random() * categoryRestaurants.length);
-                const randomPlace = categoryRestaurants[randomIndex];
+    function easeOut(t, b, c, d) {
+      const ts = (t /= d) * t;
+      const tc = ts * t;
+      return b + c * (tc + -3 * ts + 3 * t);
+    }
 
-                const rotations = Math.floor(Math.random() * 10) + 5;
-                const angle = rotations * 360 + (randomIndex * (360 / categoryRestaurants.length));
+    spinBtn.addEventListener("click", function() {
+      finalAngle = Math.random() * 500 + 500;
+      resultDiv.innerHTML = "";
+      spin();
+    });
 
-                const wheel = document.getElementById("wheel");
-                wheel.style.transition = "transform 4s ease-out";
-                wheel.style.transform = `rotate(${angle}deg)`;
-
-                setTimeout(() => {
-                    document.getElementById("result").innerText = `And the winner is: ${randomPlace}`;
-                }, 4000);
-            } else {
-                document.getElementById("result").innerText = "No restaurants found.";
-            }
-        }
-    </script>
+    drawWheel();
+  </script>
 
 </body>
 </html>
