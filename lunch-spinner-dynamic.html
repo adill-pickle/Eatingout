@@ -197,8 +197,7 @@
                 createWheelSegments(categoryRestaurants);
 
                 const randomIndex = Math.floor(Math.random() * categoryRestaurants.length);
-                const rotations = Math.floor(Math.random() * 10) + 5; // Randomize rotations between 5 and 15
-                const angle = rotations * 360 + (randomIndex * (360 / categoryRestaurants.length));
+                const angle = 360 * 5 + (randomIndex * (360 / categoryRestaurants.length)); // 5 full rotations
 
                 const wheel = document.getElementById("wheel");
                 wheel.style.transform = `rotate(${angle}deg)`;
