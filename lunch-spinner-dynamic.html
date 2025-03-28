@@ -61,25 +61,24 @@
             height: 100%;
             border-radius: 50%;
             border: 5px solid #007bff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             position: absolute;
             transition: transform 4s ease-out;
-            background: conic-gradient(
-                #1e3a8a 0% 16.66%, 
-                #3b82f6 16.66% 33.33%, 
-                #60a5fa 33.33% 50%, 
-                #93c5fd 50% 66.66%, 
-                #bfdbfe 66.66% 83.33%, 
-                #dbeafe 83.33% 100%
-            );
         }
-        .spinner {
-            font-size: 24px;
+        .wheel .segment {
+            width: 50%;
+            height: 50%;
+            position: absolute;
+            transform-origin: 100% 100%;
+            text-align: right;
+            padding-right: 10px;
+            box-sizing: border-box;
+        }
+        .wheel .segment span {
+            display: inline-block;
+            transform: rotate(90deg);
+            transform-origin: left center;
+            font-size: 18px;
             color: white;
-            text-align: center;
-            padding: 10px;
         }
         .pointer {
             width: 0; 
@@ -127,9 +126,7 @@
 
         <div class="wheel-container">
             <div class="pointer"></div>
-            <div id="wheel" class="wheel">
-                <div id="spinner" class="spinner">Spin to Find a Place!</div>
-            </div>
+            <div id="wheel" class="wheel"></div>
         </div>
 
         <div id="result" class="result"></div>
@@ -138,25 +135,48 @@
     <script>
         const restaurantData = {
             "Pizza": ["Pizza Supreme Being", "Majka Pizza","Masullo", "Pizzasaurus Rex", "Chavious"],
-            "Bakeries & sweets": ["Faria (try the olive loaf)", "Guenther’s Ice Cream (a mainstay)", "Vic’s Ice Cream", "Broadway Donuts", "Stanley Donuts", "Freeport Bakery", "Moonbelly Bakery"],
+            "Bakeries & sweets": ["Faria (try the olive loaf)", "Guenther’s Ice Cream (a mainstay)", "Vic’s Ice Cream", "Broadway Donuts", "Stanley Donuts", "Freeport Bakery", "Moonbelly Bakehouse"],
             "Breakfast": ["Breakfast Sandos: Camellia, Mast Coffee", "Forgotten Bakery (bagels)", "Morning Fork*", "Pushkin’s (on 29th and also Sibling)", "Druthers Sutter Park"],
             "Breweries & tap houses": ["SacYard tap house", "At Ease Brewing", "Urban Roots (solid food)", "Nitty’s Cider", "Pintworks (Touchstone Brewing)", "Mattie Groves", "Bike Dog"],
             "Chinese": ["Dumpling and Tea House", "Journey to the Dumpling", "Ming Dynasty (dim sum)", "Asian Pearl (dim sum)", "Frank Fat’s", "Yue Huang (dim sum in Natomas)"],
-            "Coffee": ["Pachamama", "Camellia (great coffee, EXCELLENT breakfast sandwiches)", "Immortal Cafe", "Old Soul (other food & drink options; be prepared for food to take a while)", "Temple"],
+            "Coffee": ["Pachamama", "Camellia (great coffee, EXCELLENT breakfast sandwiches)", "Immortal Cafe", "Old Soul (other food & drink options; be prepared for food to take a while)", "Temple Coffee"],
             "Drinks": ["Ten Ten Room", "The Snug", "Ro Sham Beaux", "Betty's Wine Bar", "Ju Ju Kitchen and Cocktails", "Karma Brew (solid espresso martini)", "Butterscotch Den", "KC Kombucha (non-alcoholic)"],
             "Japanese": ["Kru (high end, reservations req’d)", "Binchoyaki (yakitori, small plates, bento boxes)", "Mahroba Japanese Bakery (tons of options, really good)", "Mikuni (standard fare)"],
             "Mexican": ["Tres Hermanas (gets very, very busy)", "La Fiesta Taqueria (typical taqueria, good takeout option)", "El Rincon Mexican (tiny little spot but good!)", "Nopalitos (cash only)"],
-            "Misc Food": ["Hook & Ladder (try whatever the pasta special is)", "MOTHER (all vegetarian but if you read that and skip this, you’re wrong. Mushroom po boy is legend)", "Mecha Much"],
+            "Misc Food": ["Hook & Ladder (try whatever the pasta special is)", "MOTHER (all vegetarian but if you read that and skip this, you’re wrong. Mushroom po boy is legend)", "Mecha Mucha (Vietnamese)"],
             "Thai": ["Thai Farmhouse (on broadway, small but solid overall; good takeout option)", "Kin Thai Street Eatery (really, really good)", "Coconut on T"],
             "Vietnamese": ["Saigon Alley"],
             "High-end dining": ["Canon", "Mulvaney’s B&L", "Ella", "The Kitchen (1 star Michelin - book way in advance)", "Kru"]
         };
+
+        function createWheelSegments(categoryRestaurants) {
+            const wheel = document.getElementById("wheel");
+            wheel.innerHTML = ""; // Clear existing segments
+
+            const numSegments = categoryRestaurants.length;
+            const segmentAngle = 360 / numSegments;
+
+            for (let i = 0; i < numSegments; i++) {
+                const segment = document.createElement("div");
+                segment.classList.add("segment");
+                segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
+                segment.style.background = (i % 2 === 0) ? '#1e3a8a' : '#3b82f6';
+
+                const text = document.createElement("span");
+                text.innerText = categoryRestaurants[i];
+                segment.appendChild(text);
+
+                wheel.appendChild(segment);
+            }
+        }
 
         function spinWheel() {
             const category = document.getElementById("category").value;
             const categoryRestaurants = restaurantData[category];
 
             if (categoryRestaurants && categoryRestaurants.length > 0) {
+                createWheelSegments(categoryRestaurants);
+
                 const randomIndex = Math.floor(Math.random() * categoryRestaurants.length);
                 const randomPlace = categoryRestaurants[randomIndex];
 
